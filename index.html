@@ -442,7 +442,18 @@
             }
         }
 
-        // パドル更新
+        // パドル移動（連打対応）
+        function movePaddle(delta) {
+            paddle.x += delta;
+            // 境界チェック
+            paddle.x = Math.max(0, Math.min(canvas.width - paddle.width, paddle.x));
+            // ボールがパドルに乗っている状態
+            if (gameState === 'ready') {
+                ball.x = paddle.x + paddle.width / 2;
+            }
+        }
+
+        // パドル更新（押しっぱなし対応）
         function updatePaddle() {
             if (keys.left && paddle.x > 0) {
                 paddle.x -= paddle.speed;
@@ -777,10 +788,14 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowLeft') {
                 keys.left = true;
+                // 連打対応: キーを押すたびに即座に移動
+                movePaddle(-paddle.speed);
                 e.preventDefault();
             }
             if (e.key === 'ArrowRight') {
                 keys.right = true;
+                // 連打対応: キーを押すたびに即座に移動
+                movePaddle(paddle.speed);
                 e.preventDefault();
             }
             if (e.key === 'ArrowUp') {
